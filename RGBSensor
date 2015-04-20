@@ -1,0 +1,164 @@
+#include <Wire.h>
+#include "Adafruit_TCS34725.h"
+
+/*
+// for the RGB
+int redPin = 11;
+int greenPin = 10;
+int bluePin = 9;
+int ledsensor= 6;
+*/
+
+int laser = 11;
+int ledsensor= 6;
+
+
+
+// for the Switch Options
+const int laserbutton = 3;     // the number of the pushbutton pin
+const int ledbutton = 4;     // the number of the pushbutton pin
+
+
+// variables will change:
+int laserstate = 0;         // variable for reading the pushbutton status
+int ledstate = 0;         // variable for reading the pushbutton status
+
+
+/* Example code for the Adafruit TCS34725 breakout library */
+
+/* Connect SCL    to analog 5
+   Connect SDA    to analog 4
+   Connect VDD    to 3.3V DC
+   Connect GROUND to common ground */
+   
+/* Initialise with default values (int time = 2.4ms, gain = 1x) */
+// Adafruit_TCS34725 tcs = Adafruit_TCS34725();
+
+/* Initialise with specific int time and gain values */
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
+
+
+void setup(void) {
+  Serial.begin(9600);
+         pinMode(laser, OUTPUT);
+	
+                      
+  // initialize the pushbutton pin as an input:
+  pinMode(laserbutton, INPUT);     
+  pinMode(ledbutton, INPUT);  
+  
+    
+  if (tcs.begin()) {
+    Serial.println("Found sensor");
+  } else {
+    Serial.println("No TCS34725 found ... check your connections");
+    while (1);  
+          
+  }
+  
+  // Now we're ready to get readings!
+}
+
+        
+
+
+void loop(void) {
+  
+  buttonState1 = digitalRead(buttonPin1);
+  buttonState2 = digitalRead(buttonPin2);
+  buttonState3 = digitalRead(buttonPin3);
+  buttonState4 = digitalRead(buttonPin4);
+  buttonState5 = digitalRead(buttonPin5);
+  
+  uint16_t r, g, b, c, colorTemp, lux;
+  
+  tcs.getRawData(&r, &g, &b, &c);
+  colorTemp = tcs.calculateColorTemperature(r, g, b);
+  lux = tcs.calculateLux(r, g, b);
+  
+  digitalWrite(ledsensor, HIGH);
+  
+ Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.print(" K - ");
+  Serial.print("Lux: "); Serial.print(lux, DEC); Serial.print(" - ");
+  Serial.print("Red: "); Serial.print(r, DEC); Serial.print(" ");
+  Serial.print("Green: "); Serial.print(g, DEC); Serial.print(" ");
+  Serial.print("Blue: "); Serial.print(b, DEC); Serial.print(" ");
+//  Serial.print("C: "); Serial.print(c, DEC); Serial.print(" ");
+  Serial.println(" ");
+  delay(100);
+  
+  if (buttonState1 == HIGH) {
+  
+setColor(238, 130, 238);  // violet
+     delay(200);
+       
+setColor(75, 0, 130);  // indigo
+     delay(200);
+     
+setColor(0, 0, 255);  // blue
+	  delay(200);
+
+setColor(0, 255, 0);  // green
+	  delay(200);
+
+setColor(255, 255, 0);  // yellow
+	  delay(200);
+
+setColor(255, 165, 0);  // orange
+     delay(200);
+
+setColor(255, 0, 0);  // red
+     delay(200);
+     
+    
+    
+     }
+ 
+else if (buttonState2 == HIGH) 
+ {
+   
+   setColor(0xFF, 0xCA, 0x8A);  //  Betelgeuse (M1I) #ffca8a 
+       
+ }
+
+else if (buttonState3 == HIGH) 
+ {
+   
+  setColor(0xB6, 0xCE, 0xFF);  //  Rigel (B8I) #b6ceff 
+     delay(1000);
+    
+     }
+
+else if (buttonState4 == HIGH) 
+ {
+   
+setColor(0xFF, 0xCC, 0x8A);  //  Aldebaran (K5III) #ffcc8a 
+     delay(1000);  
+ }
+
+ else if (buttonState5 == HIGH) 
+ {
+   
+setColor(0xFF, 0xF5, 0xF2);  // SUN from Earth #fff5f2
+     delay(1000);   
+ }
+ 
+ 
+ else 
+ setColor(0, 0, 0);  //  off
+     
+}
+
+
+
+// -----------------------------------------------------
+
+	  
+
+	 
+void setColor(int red, int green, int blue)
+	{
+	  analogWrite(redPin, red);
+          analogWrite(greenPin, green);
+	  analogWrite(bluePin, blue);
+	}
